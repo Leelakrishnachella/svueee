@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('/static/img/uploads/bg1.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        .container {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 5%;
+            text-align: center;
+            background: rgba(255, 255, 255, 0);
+        }
+
+        .header {
+            font-size: 3rem;
+            margin-bottom: 30px;
+        }
+
+        .header span {
+            display: inline-block;
+            font-size: 2.5rem;
+            font-family: 'CustomFont', Arial, sans-serif;
+            color: gold;
+            text-transform: uppercase;
+            animation: glow 2s infinite alternate;
+        }
+
+        .buttons {
+            text-align: right;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .buttons a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .btn-primary {
+            background-color: #ff0000;
+        }
+
+        .btn-success {
+            background-color: #28A745;
+        }
+
+        .btn-primary:hover,
+        .btn-success:hover {
+            background-color: #b3007a;
+        }
+
+        .content {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .welcome-text {
+            font-size: 24px;
+            color: white;
+        }
+
+        .login-text {
+            font-size: 24px;
+            color: white;
+        }
+
+        .events-container {
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0);
+        }
+
+        .events {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.5s;
+        }
+
+        .event {
+            width: 300px;
+            border: 1px solid #ccc;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .event-image {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .event-image img {
+            max-width: 100%;
+            border: 3px solid gold;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        .event:hover .event-image {
+            transform: scale(1.05);
+        }
+
+        .event-details {
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            text-align: left;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            display: none; /* This line was missing */
+        }
+
+        .event:hover .event-details {
+            display: block; /* This line was missing */
+        }
+
+        .events-heading {
+            color: gold;
+            text-transform: uppercase;
+        }
+
+        .event-button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 5px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .event-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+            text-align: center;
+        }
+
+        .event-popup-content {
+            background: white;
+            border-radius: 10px;
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow: auto;
+        }
+
+        .event-popup h2 {
+            color: gold;
+            font-size: 24px;
+        }
+
+        .event-popup p {
+            font-size: 18px;
+        }
+
+        .event-popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 24px;
+            color: gold;
+        }
+
+        .payment-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+            text-align: center;
+        }
+
+        .payment-popup-content {
+            background: white;
+            border-radius: 10px;
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow: auto;
+        }
+
+        .payment-popup h2 {
+            color: gold;
+            font-size: 24px;
+        }
+
+        .payment-note {
+            font-size: 18px;
+            color: red;
+        }
+
+        .payment-popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 24px;
+            color: gold;
+        }
+
+        .event-button:hover {
+            background-color: #0056b3;
+        }
+
+        @keyframes glow {
+            0% {
+                color: gold;
+                text-shadow: 0 0 10px gold;
+            }
+
+            100% {
+                color: #00a0d2;
+                text-shadow: 0 0 20px #00a0d2;
+            }
+        }
+
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('path-to-your-custom-font.woff') format('woff');
+        }
+
+        .events-gap {
+            height: 90px;
+        }
+
+        .show-events-on-scroll .events {
+            visibility: visible;
+            opacity: 1;
+            height: auto;
+        }
+
+        .contact-section {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .contact-section h2 {
+            color: gold;
+            font-size: 24px;
+        }
+
+        .social-icons {
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            color: gold;
+            font-size: 24px;
+            margin: 0 20px;
+            text-decoration: none; /* Added this line */
+        }
+
+        .social-icons a:hover {
+            color: #00a0d2;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header {
+                font-size: 2rem;
+            }
+            .header span {
+                font-size: 1.5rem;
+            }
+            .welcome-text,
+            .login-text {
+                font-size: 16px;
+            }
+            .content {
+                font-size: 1rem;
+            }
+            .event-name {
+                font-size: 1.2rem;
+            }
+            .event-button {
+                font-size: 16px;
+            }
+            .event-cost {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="buttons">
+        <a href="/" class="btn btn-primary">Home</a>
+        <a href="/user/login" class="btn btn-success">Logout</a>
+    </div>
+    {% if 'username' in session %}
+    <p class="welcome-text">Welcome, {{ session['username'] }}</p>
+    {% else %}
+    <p class="login-text">You must log in to access the user dashboard. <a href="{{ url_for('user_login') }}">Login</a></p>
+    {% endif %}
+
+    <div class="container">
+        <h1 class="header"><span>EEE_VOLT TECH FEST</span></h1>
+        <p class="content">
+            Get ready to experience a showcase of innovation, creativity, and cutting-edge technology. This event will feature a wide range of tech-related activities, presentations, and demonstrations, offering a unique opportunity to explore the future of technology and connect with enthusiastic students driving these advancements.
+        </p>
+    </div>
+
+    <div class="events-gap"></div>
+    <div class="events-container">
+        <h2 class="events-heading">EVENTS</h2>
+        <div class="events">
+            <!-- Event cards go here -->
+            {% for event in events %}
+            <div class="event">
+                <div class="event-image">
+                    <img src="{{ url_for('static', filename='img/uploads/' + event['image']) }}" alt="{{ event['event_name'] }}">
+                </div>
+                <h3 class="event-name" style="color: white;">{{ event['event_name'] }}</h3>
+                <p class="event-cost" style="color: white;">Cost: ₹{{ event['cost'] }}</p>
+                <button class="event-button" onclick="openEventPopup('{{ event['event_name'] }}', '{{ event['description'] }}', '{{ event['date'] }}', '{{ event['time'] }}', '{{ event['cost'] }}', '{{ event['payment_image'] }}')">Pay Now</button>
+                <button class="event-button" onclick="openEventPopup('{{ event['event_name'] }}', '{{ event['description'] }}', '{{ event['date'] }}', '{{ event['time'] }}', '{{ event['cost'] }}', '{{ event['payment_image'] }}')">Explore</button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- JavaScript to trigger event section display on scroll -->
+    <script>
+        const eventContainer = document.querySelector('.events-container');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    eventContainer.classList.add('show-events-on-scroll');
+                }
+            });
+        });
+        observer.observe(eventContainer);
+
+        function openEventPopup(eventName, description, date, time, cost, paymentImageSrc) {
+            const eventPopup = document.querySelector('.event-popup');
+            const popupContent = document.querySelector('.event-popup-content');
+
+            // Populate popup content with event details
+            popupContent.innerHTML = `
+                <span class="event-popup-close" onclick="closeEventPopup()">&times;</span>
+                <h2>${eventName}</h2>
+                <p>${description}</p>
+                <p>Date: ${date}</p>
+                <p>Time: ${time}</p>
+                <p>Cost: ₹${cost}</p>
+                <button class="event-button" onclick="openPaymentPopup('${paymentImageSrc}')">Pay Now</button>
+            `;
+
+            eventPopup.style.display = 'block';
+        }
+
+        function closeEventPopup() {
+            const eventPopup = document.querySelector('.event-popup');
+            eventPopup.style.display = 'none';
+        }
+
+        function openPaymentPopup(paymentImageSrc) {
+            const paymentPopup = document.querySelector('.payment-popup');
+            const paymentPopupContent = document.querySelector('.payment-popup-content');
+
+            // Populate payment popup content with event payment details
+            paymentPopupContent.innerHTML = `
+                <span class="payment-popup-close" onclick="closePaymentPopup()">&times;</span>
+                <h2>Payment Confirmation</h2>
+                <img src="{{ url_for('static', filename='img/uploads/payment.jpg') }}" alt="Payment" style="max-width: 100%; border: 3px solid gold; border-radius: 10px;">
+                <p class="payment-note">Take a screenshot of the payment confirmation for your records.</p>
+            `;
+
+            paymentPopup.style.display = 'block';
+        }
+
+        function closePaymentPopup() {
+            const paymentPopup = document.querySelector('.payment-popup');
+            paymentPopup.style.display = 'none';
+        }
+    </script>
+
+    <div class="event-popup">
+        <div class="event-popup-content">
+            <span class="event-popup-close" onclick="closeEventPopup()">&times;</span>
+        </div>
+    </div>
+
+    <div class="payment-popup">
+        <div class="payment-popup-content">
+            <span class="payment-popup-close" onclick="closePaymentPopup()">&times;</span>
+        </div>
+    </div>
+
+    <!-- ... (previous HTML content) ... -->
+
+    <!-- Contact Us section -->
+    <div class="contact-section">
+        <h2>Contact Us</h2>
+        <div class="social-icons">
+            <!-- Add your social media links and icons here -->
+            <a href="https://www.facebook.com/leelakrishna.chella.7?mibextid=ZbWKwL" class="fa fa-facebook"></a> <!-- Facebook icon, customize the link -->
+            <a href="https://instagram.com/leelakrishna_08?igshid=NzZlODBkYWE4Ng==" class="fa fa-instagram"></a> <!-- Instagram icon, customize the link -->
+            <a href="https://www.linkedin.com/in/leelakrishna-chella-9b404a204?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="fa fa-linkedin"></a> <!-- LinkedIn icon, customize the link -->
+            <!-- Add more social media links and icons as needed -->
+        </div>
+    </div>
+</body>
+
+</html>

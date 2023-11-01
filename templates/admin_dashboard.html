@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <a href="/" class="btn btn-primary">Home</a>
+    <a href="/" class="btn btn-primary">Logout</a>
+    <a href="/user/login" class="btn btn-primary">User</a>
+    <!-- Add Bootstrap CSS link here -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Welcome to Admin Dashboard</h1>
+
+        <h2>Event Management</h2>
+
+        <!-- Create Event Form -->
+        <form method="POST" action="/admin/dashboard" enctype="multipart/form-data" class="mb-4">
+            <div class="form-group">
+                <label for="event_name">Event Name:</label>
+                <input type="text" class="form-control" id="event_name" name="event_name" required>
+            </div>
+            <div class="form-group">
+                <label for="image">Event Image:</label>
+                <input type="file" class="form-control-file" id="image" name="image" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Event Description:</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="date">Event Date:</label>
+                <input type="date" class="form-control" id="date" name="date" required>
+            </div>
+            <div class="form-group">
+                <label for="time">Event Time:</label>
+                <input type="time" class="form-control" id="time" name="time" required>
+            </div>
+            <div class="form-group">
+                <label for="cost">Event Cost:</label>
+                <input type="number" class="form-control" id="cost" name="cost" required>
+            </div>
+            <button type="submit" name="create_event" class="btn btn-primary">Create Event</button>
+        </form>
+
+        <h3>Events List</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Event Image</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Cost</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                <tr>
+                    <td>{{ event['event_name'] }}</td>
+                    <td><img src="{{ url_for('static', filename='img/uploads/' + event['image']) }}" alt="{{ event['event_name'] }}" style="max-width: 100px; max-height: 100px;"></td>
+                    <td>{{ event['description'] }}</td>
+                    <td>{{ event['date'] }}</td>
+                    <td>{{ event['time'] }}</td>
+                    <td>₹{{ event['cost'] }}</td>
+                    <td>
+                        <button class="btn btn-info" data-toggle="modal" data-target="#updateEventModal{{ event['id'] }}">Update</button>
+                        <button class="btn btn-danger" data-toggle="modal" data-target="#deleteEventModal{{ event['id'] }}">Delete</button>
+                    </td>
+                </tr>
+                <!-- Update Event Modal -->
+                <div class="modal fade" id="updateEventModal{{ event['id'] }}" tabindex="-1" role="dialog" aria-labelledby="updateEventModalLabel{{ event['id'] }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updateEventModalLabel{{ event['id'] }}">Update Event</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Update Event Form -->
+                                <form method="POST" action="/admin/dashboard" enctype="multipart/form-data">
+                                    <input type="hidden" name="event_id" value="{{ event['id'] }}">
+                                    <div class="form-group">
+                                        <label for="event_name">Event Name:</label>
+                                        <input type="text" class="form-control" id="event_name" name="event_name" value="{{ event['event_name'] }}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="image">Event Image:</label>
+                                        <input type="file" class="form-control-file" id="image" name="image">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description">Event Description:</label>
+                                        <textarea class="form-control" id="description" name="description" rows="3" required>{{ event['description'] }}</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="date">Event Date:</label>
+                                        <input type="date" class="form-control" id="date" name="date" value="{{ event['date'] }}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="time">Event Time:</label>
+                                        <input type="time" class="form-control" id="time" name="time" value="{{ event['time'] }}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cost">Event Cost:</label>
+                                        <input type="number" class="form-control" id="cost" name="cost" value="{{ event['cost'] }}" required>
+                                    </div>
+                                    <button type="submit" name="update_event" class="btn btn-primary">Update Event</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete Event Modal -->
+                <div class="modal fade" id="deleteEventModal{{ event['id'] }}" tabindex="-1" role="dialog" aria-labelledby="deleteEventModalLabel{{ event['id'] }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteEventModalLabel{{ event['id'] }}">Delete Event</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete the event "{{ event['event_name'] }}"?</p>
+                                <!-- Delete Event Form -->
+                                <form method="POST" action="/admin/dashboard">
+                                    <input type="hidden" name="event_id" value="{{ event['id'] }}">
+                                    <button type="submit" name="delete_event" class="btn btn-danger">Delete Event</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Registered Users</h2>
+    <ul>
+        {% for user in users %}
+        <li>{{ user['username'] }}</li>
+        <li>{{ user['email'] }}</li>
+        <li>{{ user['phone'] }}</li>
+
+        {% endfor %}
+    </ul>
+
+    <!-- Add Bootstrap JS and jQuery links here -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
